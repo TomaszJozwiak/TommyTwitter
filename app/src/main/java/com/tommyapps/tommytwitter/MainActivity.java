@@ -2,6 +2,7 @@ package com.tommyapps.tommytwitter;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -15,6 +16,17 @@ import com.parse.SignUpCallback;
 
 public class MainActivity extends AppCompatActivity {
 
+    public void redirectUser() {
+
+        if (ParseUser.getCurrentUser() != null) {
+
+            Intent intent = new Intent(getApplicationContext(), FollowActivity.class);
+            startActivity(intent);
+
+        }
+
+    }
+
     public void signupLogin(View view) {
 
         final EditText usernameEditText = (EditText) findViewById(R.id.usernameEditText);
@@ -25,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
             public void done(ParseUser user, ParseException e) {
                 if (e == null) {
                     Toast.makeText(MainActivity.this, "Logged in", Toast.LENGTH_SHORT).show();
+                    redirectUser();
                 } else {
                     ParseUser parseUser = new ParseUser();
                     parseUser.setUsername(usernameEditText.getText().toString());
@@ -32,8 +45,10 @@ public class MainActivity extends AppCompatActivity {
                     parseUser.signUpInBackground(new SignUpCallback() {
                         @Override
                         public void done(ParseException e) {
+
                             if (e == null) {
                                 Toast.makeText(MainActivity.this, "Signed up", Toast.LENGTH_SHORT).show();
+                                redirectUser();
                             } else {
                                 Toast.makeText(MainActivity.this, e.getMessage().substring(e.getMessage().indexOf(" ")), Toast.LENGTH_SHORT).show();
                             }
@@ -50,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         setTitle("Twitter: Login");
+
+        redirectUser();
 
         ParseAnalytics.trackAppOpenedInBackground(getIntent());
     }
